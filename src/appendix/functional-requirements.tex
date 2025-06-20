@@ -1,0 +1,83 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\subsection{Functional Requirements Frontend}
+\label{appendix:functional-requirements}
+\begin{table*}[h]
+    \centering
+    \begin{tabular}{|m{1cm}|m{3cm}|m{12cm}|}
+        %%%%%%%%%%%%%%% Register %%%%%%%%%%%%%%%%%%%%
+
+        \hline
+        ID & Title & Description \\
+        \hline
+        R-1 & Register URL & The register page must be located at HTTP://<address>/register if not a single page application \\
+        \hline
+        R-2 & Register Page & The register page should have the heading "Sign Up", and use a form with input fields, unless some other construct is preferred by the framework \\
+        \hline
+        R-3 & Register Input & The register page should require the following input from the user: Username, E-Mail, Password, Password (repeat). The password should be obscured \\
+        \hline
+        R-4 & Register Wrong Username & Registering an invalid username should return a flash error message of "You have to enter a username". An invalid username is an empty string \\
+        \hline
+        R-5 & Register Wrong Email & Registering an invalid email should return a flash error message of "You have to enter a valid email address". An invalid email address is a string that does not contain the @ sign \\
+        \hline
+        R-6 & Registering Wrong Password & Registering an invalid password should return a flash error message of "You have to enter a password". An invalid password is an empty string or a password that does not match the password (repeat) \\
+        \hline
+        R-7 & Registering Existing Username & Registering with a username that is already in use should return a flash error message of "The username is already taken" \\
+        \hline
+        R-8 & Registering Successfully & Registering successfully should redirect to /login \\
+        \hline
+
+        %%%%%%%%%%%%%%% LOGIN %%%%%%%%%%%%%%%%%%%%
+        
+        \hline
+        L-1 & Login URL & The login page must be located at HTTP://<address>/login if not a single page application \\
+        \hline
+        L-2 & Login Page & The login page should have from top to bottom: the heading "Sign In", and use a form with input fields, unless some other construct is preferred by the framework \\
+        \hline
+        L-3 & Login Input & The login page should require the following inputs: Username and Password. The password should be obscured \\
+        \hline
+        L-4 & Logging In Wrong Username & Logging in using an invalid username should return a flash error message of "Invalid username" \\
+        \hline
+        L-5 & Logging In Wrong Password & Logging in using an invalid password should return a flash error message if "Invalid password" \\
+        \hline
+        L-6 & Logging In Successfully & Logging in successfully should redirect to / \\
+        \hline
+
+        %%%%%%%%%%%%%%% My Timeline %%%%%%%%%%%%%%%%%%%%
+
+        \hline
+        MT-1 & My Timeline URL & The my timeline page must be located at HTTP://<address>/ if the user is logged in\\
+        \hline
+        MT-2 & My Timeline Page & The My Timeline page should have from top to bottom: the heading "My Timeline", a Tweet Box, and a list of the 30 latest Tweets of people the user follows and the user itself \\
+        \hline
+
+        %%%%%%%%%%%%%%% Tweet Box %%%%%%%%%%%%%%%%%%%%
+
+        \hline
+        PT-1& Public Timeline URL& The my timeline page must be located at HTTP://<address>/public if the user is logged in and HTTP://<address>/ if the user is not logged in.\\
+        \hline
+        PT-2& Public Timeline Page& The My Timeline page should have from top to bottom: the heading "My Timeline", a Tweet Box (if the user is logged in), and a list of the 30 latest Tweets\\
+        \hline
+        UT-1& User Timeline URL& The User Timeline page must be located at HTTP://<address>/<username> \\
+        \hline
+        UT-2& User Timeline Page& The User Timeline page should mimic the other timeline pages, without a tweet box, and only displays that user's tweets, as well as a follow button if the user is logged in. The follow button should turn into an unfollow button if the logged in user is following the timeline user.\\
+        \hline
+        P-1& Post& When the user uses one of the tweet boxes to post, it should create a new post which is then displayed to other users. The timeline should refresh so the user can see the tweet immediately.\\
+        \hline
+
+        %%%%%%%%%%%%%%% TODO %%%%%%%%%%%%%%%%%%%%
+
+        \hline
+        F-1& Flash messages register& After successfully  registering, a flash message should appear saying "You were successfully registered and can login now".\\
+        \hline
+ F-2& Flash messages login&After successfully  registering, a flash message should appear saying "You were logged in"\\\hline
+ F-3& Flash messages logout&After successfully  registering, a flash message should appear saying "You were logged out"\\\hline
+ F-4& Flash messages following&After successfully  registering, a flash message should appear saying "You are now following username"\\\hline
+ F5& Flash messages unfollowing&After successfully  registering, a flash message should appear saying "You are no longer following username"\\\hline
+ F6& Flash messages post&After successfully  registering, a flash message should appear saying "Your message was recorded"\\\hline
+    \end{tabular}
+    \caption{Table of functional requirements of the MiniTwit applications}
+    \label{tab:my_label}
+\end{table*}
+
+\end{document}

@@ -1,0 +1,122 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\section{Related Work}
+
+A number of studies have explored which programming languages are most energy-efficient \cite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017, Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024}. These studies typically implement a set of programmatic problems, such as streaming digits of Pi or manipulating binary trees, in different languages, and then measure energy consumption \cite[Table 1]{pereira2017energy}. Based on these measurements, the authors produce rankings according to various metrics, including execution time, memory usage, and energy consumption. 
+
+A consistent pattern across these rankings is that compiled languages, such as C and C++, generally outperform higher-level languages like C\# and Python in terms of energy efficiency. 
+
+Most studies found a strong correlation between execution time and energy consumption; faster programs typically consumed less energy. However, exceptions exist. For instance, in \textcite[Table 7]{Couto_Pereira_Ribeiro_Rua_Saraiva_2017}, Lua, despite being the slowest language tested, consumed less energy than both Perl and JRuby, highlighting that speed and energy consumption are not always directly proportional.
+
+This methodology and its results have recently been questioned. \textcite{Kempen_Kwon_Nguyen_Berger_2024} identified significant inconsistencies in the original rankings, arguing that variations in implementation quality, parallelism, and benchmarking conditions skewed the results. When replicating and refining experiments from earlier studies, they found:
+
+\begin{quote}
+    "... the choice of programming language implementation has no significant impact on energy consumption beyond execution time " \cite[page 1, abstract]{Kempen_Kwon_Nguyen_Berger_2024}
+\end{quote}
+
+\subsection{Measurement Methods}
+
+Energy consumption can be measured in two main ways: software-based estimation and hardware-based power measurement. The studies \textcite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017} rely on Intel's RAPL (Running Average Power Limit) interface \cite{khan2018rapl}, which estimates energy usage at the CPU level.
+
+\textcite{Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024} combined RAPL measurements with direct power draw readings from hardware components and found no significant discrepancies between the two methods. This suggests that software-based methods may be sufficient for energy measurement. However, RAPL is limited to Intel processors, and \textcite{Wysocki_Miciuła_Plecka_2025} argue that hardware-based methods are better suited for measuring total system energy consumption. In contrast, software-based methods are more appropriate for fine-grained measurements, such as evaluating the impact of individual method calls \cite{Wysocki_Miciuła_Plecka_2025}.
+
+\subsection{Energy Measurement of Larger Applications}
+
+The studies \textcite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017, Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024} focus on small, self-contained tasks such as sorting or tree traversal. Other researchers have examined larger software systems.
+
+For example, \textcite{Philippot_Anglade_Leboucq_2014} developed a tool to measure the energy consumption of web applications on the client side. By evaluating 500 web applications, they demonstrated that green patterns, such as effective caching, could significantly reduce energy usage.
+
+Shifting focus to server-side energy consumption, \textcite{Dutta_Vandermeer_2023} investigated the impact of architectural decisions on the energy efficiency of an e-commerce platform. They found that low-level choices, such as selecting specific data types or sorting algorithms, could significantly impact energy consumption.
+
+\textcite{Pfeiffer_Trindade_Meding_Harwick} measured the energy consumption of a micro-blogging web application implemented in several languages and web frameworks. Interestingly, their results diverged from the previously mentioned language rankings \cite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017, Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024}; for instance, JavaScript outperformed Rust.
+
+\textcite{Pfeiffer_Trindade_Meding_Harwick} was inspired by \textcite{Pfeiffer_2024}, who used a MiniTwit implementation in Python to assess how Python versioning impacts energy use. The study found that newer versions of Python were generally more energy efficient.
+
+\subsection{jemalloc, JIT, PGO, and Energy Consumption}
+
+Several papers have studied the impact of specific optimizations on energy consumption. \textcite{Li_Wu_Kavi_Mehta_Yadwadkar_John_2023} and \textcite{Lamprakos_Papadopoulos_Catthoor_Soudris_2022} compared memory allocators and found that jemalloc provided performance benefits over standard malloc.
+
+Regarding JIT, \textcite{Stoico_Dragomir_Lago_2025} examined different Python execution modes and found that enabling JIT could make Python up to 90\% more energy efficient. Similar results were reported in other studies \cite{Ournani_Belgaid_Rouvoy_Rust_Penhoat_2021, Hu_John_2006}, reinforcing the view that JIT can have a considerable impact on energy usage.
+
+To date, no studies have been conducted to investigate the impact of PGO on energy consumption, highlighting a gap in the literature.
+
+\subsection{The Focus of this Paper}
+
+Prior work suggests software configurations can significantly impact energy efficiency \cite{Kempen_Kwon_Nguyen_Berger_2024, Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen, Pfeiffer_Trindade_Meding_Harwick}. One configuration suggested by \textcite{Pfeiffer_Trindade_Meding_Harwick} is changing the operating system. This is supported by \textcite{Roque_Cruz_Durieux_2024}, who found that switching from Ubuntu to Alpine Linux increased the power draw of the memcpy function by 9.5\%, demonstrating how OS-level configurations can affect energy consumption.
+
+This paper aims to build on these insights by studying how the application of specific configurations related to optimizations, including jemalloc, JIT, and PGO, affects the energy consumption of MiniTwit implementations across different programming languages. We extend the measurement setup and application infrastructure developed in our previous research project \cite{Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen}, while adapting and adding to the set of MiniTwit implementations from \textcite{Pfeiffer_Trindade_Meding_Harwick}, which were based on the implementations from the DevOps course at IT University of Copenhagen \cite{devops-course}.
+\end{document}
+
+Other notes
+\textcite{Weber_Kaltenecker_Sattler_Apel_Siegmund_2023} did a comprehensive study of how configurations can affect energy consumption. They did this by running and measuring a set of applications (e.g., 7zip) with every possible combination of configuration, to see how it affect the energy consumption. They found they could have a significant impact.
+
+\textcite{Weber_Kaltenecker_Sattler_Apel_Siegmund_2023} looked at confguration matrix for programs like 7zip
+
+\textcite{Roque_Cruz_Durieux_2024} created a framework for identifying which parts of a program consume the most energy. This method requires 2 versions of the program, which can be conveniently done by running it with 2 different configurations. One finding from using this framework was how musl could consume 20\% more energy than glibc.
+
+
+Quick notes
+- Have a literature review covering architectural decisions. Might be too far out for a related works section
+
+Gist on how to write a related work section: https://gist.github.com/ikbelkirasan/848f97c4a1aee1fa6277ced7b5be80af
+
+
+Summaries
+\cite{Dutta_Vandermeer_2023}
+ - **What they investigate**: Can software developer at design time make choices that can improve energy consumption (energy aware software design)
+ - **How did they it**: With regard to experiment setup, they also ran a web site (eBay clone), and tested different loads while measuring average Watt consumption
+- **What the found**: decisions at both design and selection time has a impact and can therefore save a lot of energy and money for organizations
+
+\cite{Li_Hao_Gui_Halfond_2014}
+ - **What they investigate**: Where do Android apps spent their energy
+ - **How they did it**: Used a program developed in a previous paper called vLens. It: ““combines hardware-based energy measurements with program analysis and statistical modeling techniques to provide source line level energy information.” \cite[p. 123]{Li_Hao_Gui_Halfond_2014}
+ - **What they found**: Most of the applications consumed over 60\% of their energy in an idle state. The network component was the most power-consuming component. Only a few APIs used most of the non-idle energy.
+
+\cite{Georgiou_Kechagia_Spinellis_2017}
+- **What they investigate**: How much energy does a specific Rosetta Code programming task do in a specific programming language (preliminary study).
+- **How they did it**: Measured the power consumption of a Raspberry Pi while running the Rosetta Code. Used the Watts Up Pro (WUP)
+- **What they found**: C, C++, Java, and Go offer the highest energy efficiency compared to C\#, VB.NET, and Rust. PHP, Ruby, and JavaScript exhibit the most energy savings compared to Swift, R, Perl, and Python
+
+\cite{pereira2017energy}
+- **What they investigate**: Investigates the energy performance of 27 well known programming languages, given a set of 10 different programming problems (stuff like traversing a binary tree)
+- **How they did it**: They used RAPL to gather an estimate of power consumption for each language during completion of a task
+- **What they found**: Compiled languages like C, C++, and Rust are generally the most energy-efficient, fastest, and lowest in memory usage. While execution time often correlates with energy use, the study showed that energy consumption also depends on factors like memory usage and language implementation. No language was universally best across all metrics, but combinations of metrics revealed Pareto-optimal sets (e.g., C and Pascal for energy and memory). The results were validated by a 2021 follow-up study using real-world code.
+
+\cite{Yuki_Rajopadhye_2014}
+- **What they investigate**: If DVFS is used, are faster programs correlated with less energy consumed?
+- **How they did it**: Based on a theoretical analysis using a simplified energy model where energy is defined as the product of power and execution time. The authors decompose total power into three components: dynamic power (dependent on activity and frequency), static power (leakage), and constant system-level power (e.g., cooling). They evaluate how these components behave across different systems and assess the impact of execution time on energy consumption without conducting physical measurements. By modeling various scenarios, they show that minimizing execution time often results in lower total energy use, especially when constant or static power dominates, thus supporting the idea that compiling for speed aligns with compiling for energy efficiency.
+- **What they found**: They found that speed is correlated with lower energy consumption, the “race to sleep” holds using DVFS
+
+\cite{Kempen_Kwon_Nguyen_Berger_2024}
+- **What they investigate**: Critiques the previous ranking of programming languages due to errors. Creates a better energy measurement setup.
+- **How they did it**: Used RAPL to get energy measurements several times a second
+- **What they found**: Found errors in previous work that make their findings not reliable. Through their own measurements found that implementations and other factors had a greater effect on energy consumption that choosing a inefficient energy language
+
+\cite{Oliveira_Torres_Castor_Ximenes_2016}
+- **What they investigate**: How does energy use of Java Android apps compare to JavaScript ones?
+- **How they did it**: Used project Volta to collect energy measurement (build into Android)
+- **What they found**: In CPU bound tasks JavaScript outperforms Java. Also found that a hybrid approach of Java and JavaScript could lead to lower energy consumption
+
+\cite{Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024}
+- **What they investigate**: Energy differences between programming languages when running certain algorithms. This is done using a hardware-based measurement approach.
+- **How they did it**: Employed a hardware-based approach to measure energy consumption directly. This methodology involved using external hardware instruments to capture precise energy usage data across various components such as the processor, graphics card, and hard drive.
+- **What they found**: Created a ranking of different programming languages' energy consumption separated into hardware components (hard drive, CPU, RAM, …).
+
+\cite{Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021}
+- **What they investigate**: Want to rank 27 programming languages based on their performance on a set of problems (algorithmic and Rosetta code)
+- **How they did it**: Using RAPL to estimate power consumption
+- **What they found**: They were able to produce rankings based on energy consumption, execution time, and memory usage.
+
+\cite{Couto_Pereira_Ribeiro_Rua_Saraiva_2017}
+- **What they investigate**: Created a ranking of energy efficiency for a set of programming languages based on solving a set of coding problems
+- **How they did it**: Used RAPL to gain an estimate of power consumption during coding problems
+- **What they found**: Our preliminary results show that although the fastest languages tend to be the lowest consuming ones, there are other interesting cases where slower languages are more energy efficient than faster ones.
+
+\cite{Weber_Kaltenecker_Sattler_Apel_Siegmund_2023}
+- **What they Investigate**: Their main question is whether or not runtime performance (how fast it completes) can be used as a proxy for energy consumption even when software configurations are changed. They did this by 1. Did a literature review of whether or not runtime performance and energy consumption are correlated even when you use different configurations of the software, and 2. Measured the runtime performance of 14 real-world software systems using different configurations. They did this by trying out every possible configuration combination of said system (e.g., 7zip)
+- **What they Found**: While the overall correlation was strong, when looking at individual configurations the correlation does not hold, hence runtime performance can only be used as a proxy in certain situations, but otherwise energy consumption does not necessarily correlate with runtime performance
+
+\cite{Roque_Cruz_Durieux_2024}
+- **What they investigate**: Whether differences in software dependencies (like libc implementations) cause significant energy consumption differences in server applications.
+**How they did it**: They introduced a 4-step energy debugging methodology (energy measurement, software tracing, trace alignment, and analysis) and applied it to Redis running on Alpine vs. Ubuntu Linux.
+**What they found**: Alpine consumed up to 20.2\% more power due to its use of the musl libc. The `memcpy` function in musl was isolated as the primary energy hotspot compared to glibc. 

@@ -1,0 +1,38 @@
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{subfiles}
+\usepackage{biblatex}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabularray}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{longtable}
+\usepackage{multicol}
+% \usepackage{hyperref}
+% \usepackage[hyphens]{url}
+
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{colortbl}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{newunicodechar}
+\newunicodechar{▼}{\ensuremath{\blacktriangledown}}
+\newunicodechar{▲}{\ensuremath{\blacktriangle}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\definecolor{rust}{HTML}{FF6347}
+\definecolor{python}{HTML}{4682B4}
+\definecolor{ruby}{HTML}{32CD32}
+\definecolor{javascript}{HTML}{FF1493}
+\definecolor{java}{HTML}{FFD700}
+\definecolor{csharp}{HTML}{8A2BE2}
+\definecolor{go}{HTML}{00D9FF}
+
+\newcommand{\colcirc}[1]{\tikz\draw[fill=#1, draw=#1] (0,0) circle (0.1cm);}
+\newcommand{\colsq}[1]{\tikz\draw[fill=#1, draw=#1] (0,0) rectangle (0.2,0.2);}
+\newcommand{\coltri}[1]{\tikz\draw[fill=#1, draw=#1] (0,0) -- (0.2,0) -- (0.1,0.2) -- cycle;}

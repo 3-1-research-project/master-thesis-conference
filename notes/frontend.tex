@@ -1,0 +1,76 @@
+Shared
+    Title: MiniTwit -- Non-clickable
+    List of navigation, clickable
+        If logged in: my timeline | public timeline | sign out [username]
+        If not logged in: public timeline | sign up | sign in
+
+public timeline
+    features:
+        Public Timeline (title)
+        Tweet box
+        List of tweets (all tweets)
+
+my timeline
+    features:
+        My Timeline (title)
+        Tweet box
+        List of tweets (only my and followed user tweets)
+
+user timeline
+    features:
+        username's Timeline
+        If logged in and accessing yourself: This is you!
+        List of tweets, from the user
+
+sign in
+    features:
+        Sign In (title)
+        Username: input box (indented on next line)
+        Password: input box (indented on next line)
+        Sign In (button)
+
+register
+    features:
+        Sign In (title)
+        Username: input box (indented on next line)
+        E-Mail: input box (indented on next line)
+        Password: input box (indented on next line)
+        Password (repeat): input box (indented on next line)
+        Sign Up (button)
+
+logout button
+    redirects to public/login???
+
+Misc functionality
+    Flash messages
+    requirements:
+        After successful registration: "You were successfully registered and can login now"
+        After successful login: "You were logged in"
+        After successful logout: "You were logged out"
+        After successful follow: "You are now following username"
+        After successful unfollow: "You are no longer following username"
+        After a successful tweet: "Your message was recorded"
+    example:
+        <ul class="flashes"><li>{Message}</li></ul>
+        
+    Errors
+        case: 
+        Requirements:
+            After unsuccessful Login (incorrect username or password): "Invalid credentials"
+            After posting an empty message: "Message cannot be empty!"
+            After unsuccessful Register:
+                username: "You have to enter a username"
+                email: "You have to enter a valid email address" (note, email validation, TODO: provide email validation regex, is not required to use it)
+                password: "You have to enter a password"
+                password2: "The two passwords do not match"
+
+    example:
+        <div class="error"><strong>Error:</strong>{Insert Error Message}</div>
+
+    Buttons:
+        My timeline --> /
+        Public Timeline --> /public
+        Sign Out --> /logout
+        Sign Up --> /register
+        Sign in --> /login
+        (clicking on a username) --> /user/{username}

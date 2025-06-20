@@ -1,0 +1,35 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Sample Size}
+\label{sec:samle-size}
+
+\begin{table}[h]
+\begin{tabular}{|ll|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Experiment}   & \textbf{\begin{tabular}[c]{@{}l@{}}Power Analysis\\ Sample Size\end{tabular}} \\ \hline
+rust-jemalloc         & 8                                                                    \\
+\rowcolor[HTML]{EFEFEF} 
+rust-PGO              & 147                                                                  \\ \hline
+python-jemalloc        & 8                                                                    \\ \hline
+\rowcolor[HTML]{EFEFEF} 
+ruby-jemalloc         & 1                                                                    \\
+ruby-YJIT             & 1                                                                    \\ \hline
+\rowcolor[HTML]{EFEFEF} 
+javascript-jemalloc   & 14                                                                   \\
+javascript-jitless    & 9                                                                    \\ \hline
+\rowcolor[HTML]{EFEFEF} 
+java-jemalloc         & 5                                                                    \\ \hline
+csharp-jemalloc       & 4                                                                    \\
+\rowcolor[HTML]{EFEFEF} 
+csharp-quickjit-false & 2                                                                    \\ \hline
+go-jemalloc           & 84                                                                   \\
+\rowcolor[HTML]{EFEFEF} 
+go-PGO                & 5                                                                    \\ \hline
+\end{tabular}
+\caption{Power Analysis Sample Sizes for each experiment}
+\label{appendix:power-analysis}
+\end{table}
+
+\end{document}

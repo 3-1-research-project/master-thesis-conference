@@ -1,0 +1,206 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\section{Method}
+\label{section:method}
+The experiment involves a hardware-based measurement of energy consumption during simulated user interactions with MiniTwit. To accomplish this, we modify several MiniTwit implementations to run on Raspberry Pi 4Bs \cite{raspberrypi2025productbrief}.
+
+Everything required to reproduce our results and replicate our experiment can be found in the replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}.
+
+\subsection{MiniTwit Implementations}
+Most MiniTwit implementations used in our experiment originate from \textcite{Pfeiffer_Trindade_Meding_Harwick} , except for the Java Spring implementation, which we added. \textcite{Pfeiffer_Trindade_Meding_Harwick} investigates how the backend API's energy performance compares across programming languages, by ensuring the backend APIs are feature-equivalent. However, the frontends of the implementations are not.
+
+Our experiment focuses on users interacting with the application's frontend and does not use the backend API. Therefore, we introduce a set of functional requirements (see Appendix \ref{appendix:functional-requirements}) to ensure that the frontend of the implementations is feature-equivalent. Adherence to the requirements is enforced using automated tests and code review. All of this can be found in the replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}, and an overview of each MiniTwit implementation we use, along with the web framework used, can be found in Table \ref{table:programming-language-and-versions}.
+
+To ensure a realistic implementation of MiniTwit, we adhere to the guidelines set by the programming language and web frameworks for sufficient implementation. Additionally, when adjusting the existing MiniTwit implementation from \textcite{Pfeiffer_Trindade_Meding_Harwick} we used the same linters as they specified, and when adding a new Java implementation, we used the linter Checkstyle v10.21.4 \cite{checkstyleReleaseNotes}.
+
+\begin{table}[]
+\renewcommand{\arraystretch}{1.5}
+    \centering
+    \begin{tabular}{|ll|}
+        \hline
+        \rowcolor[HTML]{EFEFEF}
+         \textbf{Programming Language}& \textbf{Web Framework}\\
+         \hline
+         \tikz\draw[fill=rust, draw=rust] (0,0) circle (0.1cm); Rust v1.86.0& Actix v4\\
+         
+         \rowcolor[HTML]{EFEFEF}
+         \tikz\draw[fill=python, draw=python] (0,0) circle (0.1cm); Python v3.12.3& Flask v3.0.3\\
+         
+         \tikz\draw[fill=ruby, draw=ruby] (0,0) circle (0.1cm); Ruby v3.4.0& Sinatra v4.1.1\\
+         
+         \rowcolor[HTML]{EFEFEF}
+         \tikz\draw[fill=javascript, draw=javascript] (0,0) circle (0.1cm); JavaScript v18.19.1& Express v4.21.2 \\
+         
+         \tikz\draw[fill=java, draw=java] (0,0) circle (0.1cm); Java v17& Spring v3.0.2Asp\\
+         
+         \rowcolor[HTML]{EFEFEF}
+         \tikz\draw[fill=csharp, draw=csharp] (0,0) circle (0.1cm); C\# v12.0& NetCore 8.0.10\\
+         
+         \tikz\draw[fill=go, draw=go] (0,0) circle (0.1cm); Go v1.22.2& Gorilla v1.8.1\\ % cargo 1.86.0
+         \hline
+    \end{tabular}
+    \caption{Overview of the programming language and web framework used in each MiniTwit implementation, with the version number used}
+    \label{table:programming-language-and-versions}
+\end{table}
+
+\subsection{Experiment Design}
+The experiment is a controlled environment to measure the difference in energy consumption between optimizations of the selected MiniTwit applications. This is achieved through the lab setup, which utilizes Raspberry Pis, as they have fewer hardware components that can consume power during the experiments. Furthermore, the Raspberry Pis are easier to set up, acquire, and are cheaper than laptops.
+
+\subsubsection{Hardware Setup}
+An illustration of the experiment setup is shown in Figure \ref{fig:experiment-setup}.
+
+\begin{figure*}[]
+    \centering
+    \includegraphics[width=0.8\linewidth]{media/experiment/experiment-Setup.pdf}
+    \caption{Overview of the experiment setup we use to measure the energy consumption of a MiniTwit implementation. The setup includes five devices, specifically Raspberry Pis in our experiment, acting as a Web Server hosting the MiniTwit application, clients interacting with the application, and a Database Server. Additionally, a Controller Computer is used to start and coordinate the experiment. The controller triggers client scenarios, collects temperature data from the Web Server, and records power draw measurements via the Otii Ace Pro. All devices are interconnected through a network switch using Ethernet cables. Logical actions indicate the sequence of operations carried out during the experiment.}
+    \label{fig:experiment-setup}
+\end{figure*}
+
+\begin{itemize}
+    \item \textbf{Client Device}: Runs the client code that interacts with the MiniTwit frontend. The client code runs in a container with each Client Device having four containers, one for each of its cores
+    \item \textbf{Web Server}: Runs the MiniTwit application
+    \item \textbf{Database Server}: Runs a containerized PostgreSQL database
+    \item \textbf{Otii Ace Pro\cite{qoitech_otii_ace_pro}}: Measures the power draw by the Web Server during an experiment
+    \item \textbf{Controller Computer}: Personal Laptop used for orchestrating the experiment
+    \item \textbf{Network Switch}: Ensures a stable communication connection between the Database Server, Web Server, Client Devices, and Controller Computer
+\end{itemize}
+
+Relevant hardware specifications and versions can be found in Table \ref{table:hardware-setup}.
+
+\begin{table*}[]
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|llllll|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Component}     & \textbf{Device} & \textbf{Model} & \textbf{RAM} & \textbf{OS}         & \textbf{Role}                  \\ \hline
+Server                 & Raspberry Pi    & 4B             & 8GB          & Ubuntu Server 24.10 & Hosting MiniTwit applications  \\
+\rowcolor[HTML]{EFEFEF} 
+Clients                & Raspberry Pi    & 4B             & 8GB          & Ubuntu Server 24.10 & Simulating user interactions   \\
+Database               & Raspberry Pi    & 4B             & 4GB          & Ubuntu Server 24.10 & Postgres database              \\
+\rowcolor[HTML]{EFEFEF} 
+Power-Meter \& -Supply & Otii            & Ace Pro        & N/A          & N/A                 & Measures Web Server power draw \\ \hline
+\end{tabular}
+\caption{Hardware and its specifications used in the experiment.}
+\label{table:hardware-setup}
+\end{table*}
+
+\subsubsection{Software Setup}
+The software running during the experiment is shown in Figure \ref{fig:experiment-deployment}. This includes the use of containers in both the Database Server and Client Devices, and describes how there are 12 Client Services, split across three Client Devices. The Web Server runs the MiniTwit implementations without containers to eliminate any uncertainties that the containers may cause in our measurements.
+
+\begin{figure*}[]
+    \centering
+    \includegraphics[width=\linewidth]{media/experiment/experiment-deployment.png}
+    \caption{A deployment diagram illustrating software components running on each device, the Controller computer, and the Otii Ace Pro.}
+    \label{fig:experiment-deployment}
+\end{figure*}
+
+Using containers for the Database Server and Client Devices makes the development and deployment process easier, as development happens in the same environments as the actual experiment setup. Specifically, the client containers enabled simulating more clients using fewer devices, because each of the 4 client containers on a Client Device can use a single core and thereby run in parallel.
+
+\subsubsection{The Experiment}
+When talking about experiments, there is terminology we first need to cover.
+
+\begin{itemize}
+    \item \textbf{Experiment}: Consists of the steps related to running an experiment shown in Figure \ref{fig:experiment-run-scenario-sequence-diagram}. These include starting and stopping power measurements, triggering scenarios, collecting temperature readings from the Web Server, etc.
+    \item \textbf{Experiment Iteration}: Each experiment is repeated 5 times, where each of these repetitions is referred to as an iteration
+    \item \textbf{Scenario}: The part of the experiment that simulates user interactions. It is implemented using Python scripts to interact with the MiniTwit application. The scenario consists of a specific set of actions, which is summarized in Figure \ref{fig:experiment-scenario-sequence-diagram}
+\end{itemize}
+
+An experiment starts by manually ensuring every device is connected and set up as specified in Figure \ref{fig:experiment-setup}, and the required software is running as specified in Figure \ref{fig:experiment-deployment}. Then the Controller Computer can execute the 5 experiment iterations.
+
+Each iteration starts with a temperature reading from the Web Server's CPU. This is done to ensure that no experiment begins with an abnormal CPU temperature that could affect the results. Afterwards, it makes a call to the Otii to initiate the power measurement. The Controller Computer sends out calls to the 12 Client Services to start their scenario (see Figure \ref{fig:experiment-run-scenario-sequence-diagram}). After each of the 12 Client Services has finished the scenario, the Controller Computer finishes the Otii power measurement. Then it collects another temperature reading from the Web Server, to see how the CPU temperature changed during the experiment and ensure it remained within a reasonable range. Lastly, the Controller Computer collects the power draw readings from the Otii and saves them to a local CSV file.
+
+\begin{figure*}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{media/experiment/experiment-run.png}
+    \caption{Sequence diagram illustrating a single experiment iteration. To simplify the figure, not all 12 Client Services are shown.}
+    \label{fig:experiment-run-scenario-sequence-diagram}
+\end{figure*}
+
+The scenario run in each client service is shown in Figure \ref{fig:experiment-scenario-sequence-diagram}, and consists of four phases:
+
+\begin{enumerate}
+    \item A loop creates 10 users
+    \item Each of the 10 users sends 30 tweets
+    \item Each of the 10 users logs in and follows each of the 9 other users
+    \item Each of the 10 users logs in and unfollows each of the 9 other users
+\end{enumerate}
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\columnwidth]{media/experiment/experiment-scenario.png}
+    \caption{Sequence diagram showing the actions taken during a scenario run conceptually.}
+    \label{fig:experiment-scenario-sequence-diagram}
+\end{figure}
+
+The design idea behind the scenario is to ensure that we utilize the HTTP operations: POST, GET, and DELETE. Each of the operations is a part of the following stages of the scenario:
+
+\begin{itemize}
+    \item POST: Phase 1 when creating users, phase 2 when creating a tweet, and phase 3 when following a user, as that creates a follow-entry in the database. 
+    \item GET: Phases 2, 3, and 4, as navigating to any page that displays tweets results in a read operation.
+    \item DELETE: Step 4, when unfollowing a user, as that deletes the follow-entry from the database.
+\end{itemize}
+
+\subsection{Choice of Optimizations}
+We decided to measure, at most, two optimizations for each implementation. Additionally, for each implementation, a control experiment is run, with default optimizations. Which, from now on, is referred to as the default experiment. We decided on two types of optimizations, one related to the memory allocator (jemalloc) and one related to FDO.
+
+For FDO either PGO or JIT is used, depending on which one is readily available for the given implementation's underlying programming language. Regarding memory management, we decide to use jemalloc, as it is explicitly designed for a multithreaded context, such as a web application.
+
+Table \ref{table:chosen-configurations} contains an overview of the chosen optimizations for each experiment.
+
+\begin{table*}[]
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|llll|}
+\hline
+\rowcolor[HTML]{EFEFEF} 
+\textbf{Experiment} & \textbf{Programming Language} & \textbf{Memory Allocator} & \textbf{FDO}                \\ \hline
+\colcirc{rust} rust-default     & Rust        & Malloc (default)          & PGO Disabled (default)      \\
+\rowcolor[HTML]{EFEFEF} 
+\colsq{rust} rust-jemalloc      & Rust        & Jemalloc                  & PGO Disabled (default)      \\
+\coltri{rust} rust-pgo          & Rust        & Malloc (default)          & PGO Enabled                 \\ \hline
+\rowcolor[HTML]{EFEFEF} 
+\colcirc{python} python-default & Python      & Malloc (default)          & N/A*                         \\
+\colsq{python} python-jemalloc  & Python      & Jemalloc                  & N/A*                         \\ \hline
+\rowcolor[HTML]{EFEFEF} 
+\colcirc{ruby} ruby-default     & Ruby        & Malloc (default)          & YJIT Disabled (default)     \\
+\colsq{ruby} ruby-jemalloc      & Ruby        & Jemalloc                  & YJIT Disabled (default)     \\
+\rowcolor[HTML]{EFEFEF} 
+\coltri{ruby} ruby-yjit         & Ruby        & Malloc (default)          & YJIT Enabled                \\ \hline
+\colcirc{javascript} javascript-default     & JavaScript & Malloc (default)          & JIT Enabled (default)       \\
+\rowcolor[HTML]{EFEFEF} 
+\colsq{javascript} javascript-jemalloc      & JavaScript & Jemalloc                  & JIT Enabled (default)       \\
+\coltri{javascript} javascript-jitless      & JavaScript & Malloc (default)          & JIT Disabled                \\ \hline
+\rowcolor[HTML]{EFEFEF} 
+\colcirc{csharp} csharp-default             & C\#         & Malloc (default)          & Quick JIT Enabled (default) \\
+\colsq{csharp} csharp-jemalloc             & C\#         & Jemalloc                  & Quick JIT Enabled (default) \\
+\rowcolor[HTML]{EFEFEF} 
+\coltri{csharp} csharp-quickjit-false      & C\#         & Malloc (default)          & Quick JIT Disabled          \\ \hline
+\colcirc{java} java-default                 & Java        & Malloc (default)          & N/A*                         \\
+\rowcolor[HTML]{EFEFEF} 
+\colsq{java} java-jemalloc                 & Java        & Jemalloc                  & N/A*                         \\ \hline
+\colcirc{go} go-default                     & Go          & Malloc (default)          & PGO Disabled (default)      \\
+\rowcolor[HTML]{EFEFEF} 
+\colsq{go} go-jemalloc                     & Go          & Jemalloc                  & PGO Disabled (default)      \\
+\coltri{go} go-pgo                          & Go          & Malloc (default)          & PGO Enabled                 \\ \hline
+\end{tabular}
+\caption{Table describing each selected experiment and its adjusted optimizations. * Entries labeled "N/A" mean we did not find a suitable optimization within the category for the specific programming language}
+\label{table:chosen-configurations}
+\end{table*}
+
+\subsubsection{PGO profiling}
+Using PGO on an application requires profile data. This tracks which parts of the code are frequently used and which are rarely used, and uses this information when compiling the code to optimize it accordingly. For our experiments, we acquire the profile data by running a single data-collection experiment iteration with the default version of the specific implementation. The data-collection experiment iteration involves running the same scenario as all the other experiments; however, it is not included in the resulting power measurements. 
+
+\subsection{Statistical Analysis}
+To assess the significance of each experiment, we include p-values, which indicate the likelihood that the results are statistically different compared to the default experiment. A high p-value suggests no meaningful difference, while a value below 0.05 is considered statistically significant. 
+
+We determine whether our data is normally distributed to identify the appropriate statistical test to use. For this, we run a Shapiro-Wilk test \cite{shapiro1965analysis}. In this test our null-hypothesis h\textsubscript{0} is: the data is normally distributed. Our alternative hypothesis h\textsubscript{a} is: the data is not normally distributed. 
+
+To determine whether there is a statistically significant difference between the default experiment and each implementation, we conduct a set of statistical tests. We use the parametric statistical test, Student's t-test \cite{student1908}, for the normally distributed data. We do this to ensure the most accurate p-value for each experiment, as the parametric tests are more accurate under data assumptions. The non parametric statistical test, Mann-Whitney U test \cite{mann1947test}, is used for the non-normal data. In both of these tests, our null hypothesis h\textsubscript{0} is: the data is from the same dataset. Our alternative hypothesis h\textsubscript{a} is: the data is from two separate datasets.
+
+Each of these two tests also provides a statistical value: the t-statistic for the t-test and the U-statistic for the Mann-Whitney U test. These values are used to indicate the magnitude of the difference between the two compared datasets. A larger value means a larger difference. Aside from these statistics, we also calculate the percentage change. These percentages are not derived from statistical tests and should not be regarded as exact or conclusive data; instead, they indicate whether a dataset's mean is higher or lower, and by how much, in understandable values. The reason for using calculated percentages is that the t-test compares means, while the Mann-Whitney U test compares ranks, meaning we cannot directly compare their given statistics. 
+
+Additionally, we use the Pearson correlation coefficient to measure the linear relationship between execution time and power draw. It quantifies the strength of the correlation between the two variables and provides a value ranging from -1 to 1 \cite{sedgwick2012pearson}. Furthermore, it provides a p-value that must also be below 0.05 to be statistically significant. 
+
+\subsubsection{Statistical Power Analysis}
+We conduct a power analysis to determine the minimum number of iterations necessary for our data to achieve a statistical power of 0.8, which indicates a 20\% chance of false negatives, and a significance level of 0.05, corresponding to the likelihood of false positives. We calculate the minimum number of sample iterations required for a given experiment and ensure an equal number of default iterations to facilitate a fair comparison. The equations we employ include Cohen's d \cite{cohen1988} for normally distributed data and a non-parametric power analysis \cite{noether1987} for non-normal datasets.
+ 
+\end{document}

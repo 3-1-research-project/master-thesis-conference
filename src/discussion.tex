@@ -1,0 +1,65 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\section{Discussion}
+
+% Summary findings related to research question
+In summary, of our 12 non-default experiments, 7 of them are statistically significant when compared to the default experiment. This means that for the remaining 5, we find that performing the selected optimizations does not significantly impact energy consumption. The largest impact is observed in our JavaScript and Ruby implementations, where a single optimization can significantly affect energy consumption. Notably, for JavaScript, disabling JIT causes a $\sim14\%$ increase in energy consumption, while for Ruby, the YJIT optimization causes a $\sim6\%$ decrease in energy consumption. We also observe a strong positive correlation between execution time and average power draw across experiments, meaning that longer running implementations also draw more power during the experiment. Generally, we observe a decrease in energy consumption when using FDOs. Regarding the use of jemalloc compared to malloc, we typically see an increase in energy consumption for experiments using jemalloc, except for the Ruby implementation, which experienced a significant decrease (-2.08\%, see $\Delta E$ in Table \ref{table:table-results}). Additionally, we find that the specific implementation has a greater impact on the energy consumption than the adjustments made with optimizations.
+
+Relating this to our research question, \emph{How do different implementations of a feature equivalent micro-blogging application vary in energy consumption depending on how the software is optimized}. We observe that altering specific optimizations, such as JIT, PGO, and the memory allocator, as described in our paper, impacts energy consumption. However, abnormalities like ruby-jemalloc still inhibit us from making general statements about specific optimizations.
+
+% Related Work
+% Programming language rankings
+Although the primary purpose of this paper is not to rank programming languages, we can still compare our results to the programming language rankings of our related work \cite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017}, who found that Java and C\# use less energy than JavaScript. However, we find that JavaScript consumes less energy than both Java and C\#, which is opposite to previous findings. 
+
+This suggests that rankings of implementations or programming languages depend on the context in which they are used.
+
+% kempen
+Furthermore, our results support the findings from \textcite{Kempen_Kwon_Nguyen_Berger_2024} and future work proposed by \textcite{Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen, Pfeiffer_Trindade_Meding_Harwick} in that optimizations do have a significant impact on how much energy a given implementation consumes. 
+
+%jemalloc
+For instance, while \textcite{Li_Wu_Kavi_Mehta_Yadwadkar_John_2023} and \textcite{Lamprakos_Papadopoulos_Catthoor_Soudris_2022}, found performance gains from using jemalloc over the default malloc, our findings indicate that only Ruby experiences improvements to performance (i.e., reduced execution time) compared to its default allocator. The other experiments are slower compared to their default experiments (see $\Delta t$ in Table \ref{table:table-results}).
+
+%JIT
+Finally, our experiments with JIT for JavaScript, Ruby, and C\# consistently show that having JIT enabled leads to lower energy consumption (see $\Delta E$ in Table \ref{table:table-results}), supporting the conclusion of  \textcite{Stoico_Dragomir_Lago_2025, Ournani_Belgaid_Rouvoy_Rust_Penhoat_2021, Hu_John_2006}.
+
+\subsection{Unexpected results}
+% Unexpected results
+% Jemalloc and Ruby
+Surprisingly, Ruby used less energy when using jemalloc compared to malloc as its memory allocator. This goes against our second hypothesis that jemalloc causes increased energy consumption. While we can not find any academic literature explaining why, multiple grey literature sources find Ruby uses a lot of memory due to fragmentation \cite{ruby-developer-memory-fragmentation, ruby-memory-fargmentation-joyfulbikesheddingWhatCauses}, which can be solved by using jemalloc instead of malloc \cite{ruby-jemalloc-fix, ruby-sidekiq-jemalloc}. Additionally, \textcite{Kempen_Kwon_Nguyen_Berger_2024} found that cache misses correlate with increased energy consumption; this could also be the case for our results, as memory fragmentation increases the number of low-level cache misses.
+
+% Only Java had a worse first run
+Furthermore, we expected implementations using JIT to have a worse first experiment run due to the optimizations performed by JIT, yet this only happens with Java. This suggests that JIT optimizations do not take a lot of time or energy to perform. We cannot determine why Java has a worse first-run experience, as we do not have the time to investigate it further.
+
+\subsection{Threats to Validity}
+\label{section:threats-to-validity}
+
+\subsubsection{Conclusion Validity}
+As we only have a small number of experiment iterations, we cannot guarantee the validity of all our results. We have attempted to remedy this by using the Shapiro-Wilk test to determine the most appropriate and powerful statistical test to use. While none of the statistical tests have a minimum number of data points, a sample size of five is generally considered very small, and as such, we should be careful when drawing any conclusions. On the other hand, many of our Student's t-test and Mann-Whitney U test results are multiple orders of magnitude lower than our chosen upper bound of 0.05. As such, we are confident in the results of most of our conclusions.
+
+%, to see how many minimum iterations we should do for each experiment.
+For our power analysis, we did not conduct a pilot study, which is usually recommended. Instead, we based our calculations on the observed results to estimate the number of iterations required to achieve greater statistical significance in future experiments. Additionally, we want to understand which experiments had enough iterations. In most cases when the experiment showed a low p-value, it was synonymous with a low number of samples. However, in the python-jemalloc experiment has a power analysis of 8, but still showed a p-value lower than 0.05 after only 5 iterations. This suggests that the experiment could benefit from more iterations to ensure the reliability of the p-value. A table showing all the results can be found in Appendix \ref{sec:samle-size}.
+
+\subsubsection{Internal Validity}
+Increasing the number of experiment iterations might help mitigate the influence of outlier events by averaging their effects over time. For example, task scheduling on the OS, errors in the containers, and more.
+
+Another internal threat to validity is the temperature of the Raspberry Pi. As mentioned in section \ref{section:method}, we measure the temperature of the Web Server's CPU before and after each experiment iteration. In Appendix \ref{sec:temperature-readings}
+
+Table \ref{sec:temperature-readings} in Appendix, shows all experiment iterations' temperatures. As mentioned in the results, the temperatures span 42°C  to 50°C . Notably, the temperature does not come close to the thermal throttling threshold  of the Raspberry Pi (85°C \cite{raspberry-pi-thermal-throttling-github}). As measurements are taken only before and after, we cannot guarantee the exact temperature during the runs. Still, we expect it to be between the pre- and post-temperatures, at most a few degrees outside this range. We know that increased temperature can cause an increase in power draw \cite{ling2016university}; however, we are uncertain to what extent this impacts our measurement.
+
+\subsubsection{Construct Validity}
+% Scenario not based on usage data
+As the scenario is based on repetitive HTTP operations, it is possible that our readings do not reflect a realistic use of micro-blogging websites. An alternative scenario could match a user's interaction with the application.
+
+% Repetitive scenarios
+Our scenario performs the same actions in bulk, such as creating all users simultaneously, posting messages for each user, and having each user follow all others. This repetition could influence how JIT compilation and PGO behave, as these optimizations might perform better in a repetitive context compared to a more realistic, varied interaction pattern.
+
+In both the java-default and the java-jemalloc experiments, the first iteration is an outlier (see Table \ref{sec:raw-readings} in Appendix). This could be the result of JIT trying to optimize the scenario. While we didn't see as large an outlier in the other JIT-enabled experiments, it's possible we could remove the existing outliers by doing six iterations and only using the last five. However, this introduces a bias for JIT in the data, would need to be addressed. 
+
+% Not-perfect implementations
+Even though we attempt to fairly represent each programming language and web framework by following the provided guidelines and applying linters when writing code, this does not guarantee a comparable implementation. For example, representing a tweet's published date either as a string or a datetime object can affect the energy consumed, as seen in \textcite{Dutta_Vandermeer_2023}.
+
+\subsubsection{External Validity}
+% Maybe mention the other groups results?
+So far, our results show the optimization effect on energy consumption of a micro-blogging application in our context. We do not know if running the MiniTwit implementations on, e.g., a different operating system, would yield different results, as seen in \textcite{Roque_Cruz_Durieux_2024}.
+
+\end{document}

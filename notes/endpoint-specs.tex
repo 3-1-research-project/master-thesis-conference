@@ -1,0 +1,162 @@
+Definitions:
+    My Timeline: if authenticated = followed users tweets and the users own tweets
+    Public Timeline: all tweets
+    User Timeline: all tweets of the selected user
+
+Misc:
+    Authentication: done via session storage, client storage, etc. And not through database calls
+
+Frontend Endpoint:
+    endpoint: /
+        method: get
+        case: User is authenticated
+            Returns My Timeline
+        case: User is not authenticated
+            Redirects to /public
+        Example: 
+            if user not authenticated:
+                Redirect to /public
+            else:
+                messages = get all messages where the author is the authenticated user or a followed user
+                messages = get_followers
+                    .innerJoin(followers as f)
+                    .iner
+                    .where(m => m.authorId == signed_in_user.id || m.authorId == )
+                    .union(get_
+
+                
+    
+    endpoint: /public
+        method: get
+        case:
+            Returns the Public Timeline with a limit of 30 tweets. takes all tweets
+    
+    endpoint: /register
+        method: get
+        case: User is authenticated
+            Redirects My Timeline
+        case: User is not authenticated
+            Returns the Register page
+    
+    endpoint: /register
+        method: post
+        case: Register is successful
+            Redirects to /login
+        case: Register is unsuccessful 
+            Reloads, optionally returns Register HTML, with error
+    
+    endpoint: /user/{username}
+        method: get
+        case: User exists
+            Returns User Timeline
+        case: User does not exist
+            Returns 404 (no HTML)
+
+    endpoint: /{username}/follow
+        method: get
+        case: Login user does not follow user 
+            Current login user follows user with {username}, and updates the UI
+        case: Login user already follows users
+            Return 500
+        case: User is not logged in
+            Redirects to login
+        case: User with username does not exist
+            Returns 404
+        example: 
+                
+    endpoint: /{username}/unfollow
+        method: get
+        case: Login user does not follow user 
+            Return 400
+        case: Login user follows users
+            Current login user now no longer follows {username} (the follower row is deleted in the db), and updates the UI
+        case: User is not logged in
+            Redirects to login
+        case: User with username does not exist
+            Returns 404
+            
+    endpoint: /add_messages // add_message?
+        method: post
+        case: User is authenticated
+            case: Message is empty
+                Redirects to /public and adds an error message
+            case: Message is not empty
+                Redirects to /public and shows a success message
+        case: User is not authenticated
+            Returns Unauthorized
+        case: Error?
+            Returns 500
+        example:
+
+            
+    endpoint: /login
+        method: get
+        case: User is authenticated
+            Redirect to My Timeline
+        case: User is not authenticated
+            Return Login HTML
+
+    endpoint: /login
+        method: post
+        case: Login fails
+            Returns wrong credentials and 404
+        case: Login is success
+            Redirects to My Timeline
+
+    endpoint: /logout
+        method: get
+        case: 
+            Redirects to Public Timeline
+
+Backend Endpoints:
+    note: all backend endpoints are behind /api/
+    case: If sim auth token not present, return 401
+    username: simulator
+    password: super_safe!
+
+
+    endpoint: /api/latest
+        method: get
+            Returns the lastest count which is an int (as json) `{ "latest": int }`
+
+    endpoint: /api/register
+        method: post
+        case: Incorrect input fields
+            Returns fitting error message, returns 400
+        case: 
+            Returns 204 (no content)
+
+    endpoint: /api/msgs
+        method: get
+        case: 
+            Retrieve the latest messages message, with a given amount and query (amount defaults to 100, query?). return 200
+    
+    endpoint: /api/msgs/{username}
+        method: get
+        case: User does not exist
+            Returns 404
+        case: User does exist
+            Returns 200 with list of messages limited by amount (default 100, see above)
+    
+    endpoint: /api/msgs/{username}
+        method: post
+        case: Messages is successfully posted, and user exist
+            Returns 204 (no content)
+        case: User does not exist
+            Returns 404
+
+    endpoint: /api/fllws/{username}
+        method: get
+        case: User exist
+            returns user's list of followers, 200
+        case: User does not exist
+            Returns 404
+    
+    endpoint: /api/fllws/{username}
+        method: post
+        case: User does not exist
+            Returns 404 (not found)
+        case: Incorrect data follow/unfollow update cannot be done
+            Return 400 (badrequest)
+        case: follow/unfollow succeeds
+            Returns 204
