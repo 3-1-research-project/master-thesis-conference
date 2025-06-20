@@ -25,11 +25,13 @@ The micro-blogging web application used is MiniTwit, a minimal clone of X (forme
 
 We propose a set of hypotheses to guide the research, focusing on specific questions related to energy measurement and optimization.
 
-\textcite{Kempen_Kwon_Nguyen_Berger_2024} found that when normalizing every programming language to have the same power draw, the only factor affecting energy consumption is execution time. Since we have not normalized our MiniTwit implementations, we would like to investigate the relationship between power draw and execution time.
+In a previous research project we found that the longer an experiment ran, the more power it would draw. We would like to investigate if this is a consistent pattern.
 
 \begin{quote}
-    \textbf{HYPOTHESIS 1 (H1)}: \emph{Power draw and execution time are linearly correlated}
+    \textbf{HYPOTHESIS 1 (H1)}: \emph{Implementations with longer execution times draw more power on average, compared to implementations with shorter execution time}
 \end{quote}
+
+% Longer running applications draw more power
 
 One approach used for optimizing web applications is the addition of JIT compilation. A recent example of this is Shopify, which added a new JIT implementation to Ruby called Yet Another Ruby JIT (YJIT) and saw a significant performance increase. \cite{shopify-yjit}. This raises the question of whether the use of JIT also reduces energy consumption. PGO performs the same optimizations as JIT, but at compile time instead of runtime, which is why we want to see if PGO also decreases energy consumption.
 
@@ -37,19 +39,13 @@ Another way to increase the performance of web applications has been achieved th
 
 We investigate the three optimizations of jemalloc, JIT, and PGO in their own hypotheses.
 
-We suspect that the MiniTwit application does not perform any task that would cause a high degree of lock congestion in the memory allocator, which causes congestion issues that jemalloc resolves. This leaves only the overhead of using jemalloc, leading to an increase in energy consumption.
-
 \begin{quote}
-    \textbf{HYPOTHESIS 2 (H2)}: \emph{Implementations configured to use jemalloc will have an increased energy consumption compared to implementations using malloc}
+    \textbf{HYPOTHESIS 2 (H2)}: \emph{Implementations configured to use jemalloc will have an lower energy consumption compared to implementations using malloc}
 \end{quote}
-
-We expect that JIT's optimizations at runtime may initially increase energy consumption, but they will ultimately decrease the application's overall energy consumption.  
 
 \begin{quote}
     \textbf{HYPOTHESIS 3 (H3)}: \emph{Implementations configured to use JIT will have lower energy consumption}
 \end{quote}
-
-As PGO optimizes applications based on collected data about how they are run at compile time, we expect this to have a positive impact on the application's energy consumption. 
 
 \begin{quote}
     \textbf{HYPOTHESIS 4 (H4)}: \emph{Implementations configured to use PGO will have lower energy consumption}
@@ -61,18 +57,6 @@ Although we believe that optimizations will play a significant role in an implem
     \textbf{HYPOTHESIS 5 (H5)}: \emph{Some implementations will consume more energy than others, regardless of how we configure the runtime optimizations and memory allocator}
 \end{quote}
 
-Guided by the research question and the hypotheses, the study aims to achieve the following goals: 
-
-\begin{quote}
-    \textbf{GOAL 1 (G1)}: \emph{To investigate the stated hypotheses regarding how different software optimizations influence the energy consumption of web applications.}
-\end{quote}
-
-\begin{quote}
-    \textbf{GOAL 2 (G2)}: \emph{To investigate energy consumption in a more realistic, practical context of energy-efficient software development, using a web application.}
-\end{quote}
-
-% - High-level method description
-% IDEA: We investigate how optimizations affect energy consumption by a hardware measurement experiment
 We measure the energy consumption of feature-equivalent MiniTwit web applications implemented in different programming languages. The experiment uses Raspberry Pi devices to host the web application, run the application’s database, and simulate client interactions through a scripted scenario. Different experiments are conducted on the same implementations, varying optimizations to observe their effects. Measurements are done using a hardware-based power measurement method on the web application device.
 
 % - High-level results

@@ -1,10 +1,7 @@
-\documentclass[sigconf]{acmart}
+\documentclass[runningheads]{llncs}
 
-\settopmatter{printacmref=false, printccs=false, printfolios=true}
-\renewcommand\footnotetextcopyrightpermission[1]{}
-\acmConference[MSc Thesis]{MSc Thesis}{June 2025}{IT University of Copenhagen}
-\acmYear{}
-\acmDOI{}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
 
 \input{preamble.tex} 
 \addbibresource{references.bib} 
@@ -24,15 +21,19 @@
 \newunicodechar{▼}{\ensuremath{\blacktriangledown}}
 \newunicodechar{▲}{\ensuremath{\blacktriangle}}
 
-\title{Software Optimizations' Effect on the Energy Consumption of Web Applications}
-\date{2nd of June 2025}
 
 \begin{document}
 
+\title{Software Optimizations' Effect on the Energy Consumption of Web Applications}
+\date{2nd of June 2025}
+
 \input{src/authors}
-\input{src/abstract}
 
 \maketitle
+
+\input{src/abstract}
+
+
 
 \subfile{src/introduction.tex}
 \subfile{src/background.tex}
@@ -49,12 +50,5 @@
 
 \clearpage
 
-\onecolumn
 
-\section{Appendix}
-\subfile{src/appendix/functional-requirements.tex}
-\subfile{src/appendix/temperature-table-2.tex}
-\subfile{src/appendix/sample-size-table.tex}
-\newpage
-\subfile{src/appendix/experiment-iterations-table.tex}
 \end{document}

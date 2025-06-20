@@ -1,6 +1,6 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
-\section{Analysis}
+\section{Analysis and Discussion}
 
 We evaluate the results against the five hypotheses proposed. Statistical significance is determined using the Student's t-test and the Mann-Whitney U test, with a standard significance threshold of p < 0.05, indicating rejection of the null hypothesis.
 
@@ -18,25 +18,27 @@ In Figure \ref{fig:analysis-energy-time-correlation}, we see that there is a cor
 
 To determine the strength and significance of the correlation, we use Pearson's Correlation between power draw and time for our results. For this, we see a correlation of 0.86 with a p-value of $3.09\times 10^{-29}$, indicating a very strong positive correlation  \cite{pearson-correlation-table}.
 
-\subsection{H2: jemalloc increases energy consumption compared to malloc}
+\subsection{H2: jemalloc lowers energy consumption compared to malloc}
 
-Our results from Table \ref{table:table-results} indicate that jemalloc generally leads to higher energy consumption compared to malloc, confirming H2 in most cases.
+Our results from Table \ref{table:table-results} indicate that jemalloc generally leads to higher energy consumption compared to malloc, rejecting H2 in most cases.
 
-\textbf{csharp-jemalloc:} The average power consumption is lowered when using jemalloc compared to the default experiment, but the execution time increases enough to make the energy consumption greater (+2.16\%, see $\Delta E$ in Table \ref{table:table-results}).
+% \textbf{csharp-jemalloc:} The average power consumption is lowered when using jemalloc compared to the default experiment, but the execution time increases enough to make the energy consumption greater (+2.16\%, see $\Delta E$ in Table \ref{table:table-results}).
 
-\textbf{go-jemalloc:} Does have a decrease in energy consumption (-0.19\%, see $\Delta E$ in Table \ref{table:table-results}), however it's p-value is above the desired threshold, which means that the difference is not statistically significant. 
+%\textbf{go-jemalloc:} Does have a decrease in energy consumption (-0.19\%, see $\Delta E$ in Table \ref{table:table-results}), however it's p-value is above the desired threshold, which means that the difference is not statistically significant. 
 
 \textbf{ruby-jemalloc:} Shows an energy reduction (-2.08\%, see $\Delta E$ in Table \ref{table:table-results}), supported by a p-value close to zero, meaning this reduction is statistically significant. Suggesting that using jemalloc with Ruby is beneficial for reducing the application's energy consumption. 
  
-Thus, while jemalloc often increases energy consumption, in some implementations, like Ruby, it can have a beneficial effect.
+While jemalloc often increases energy consumption, in some Miniimplementations, like Ruby, it can have a beneficial effect.
 
 \subsection{H3: JIT reduces energy consumption}
 
 The results strongly support our hypothesis that JIT reduces energy consumption.
 
-\textbf{ruby-yjit:} Using YJIT, we see a decrease in energy (-6.37\%, see $\Delta E$ in Table \ref{table:table-results}), power (-2.53\%, see $\Delta P$ in Table \ref{table:table-results}), and time (-3.82\%, see $\Delta t$ in Table \ref{table:table-results}). For our Ruby implementation, using YJIT not only speeds up execution but does so more efficiently, drawing less power in the process.
+\textbf{ruby-yjit:} Using YJIT, we see a decrease in energy consumption (-6.37\%, see $\Delta E$ in Table \ref{table:table-results}). For our Ruby implementation, using YJIT not only speeds up execution but does so more efficiently, drawing less power in the process.
 
-\textbf{javascript-jitless:} For javascript-jitless, disabling JIT resulted in the largest increase in energy consumption across all experiments (+14.5\%, see $\Delta E$ in Table \ref{table:table-results}), and an increase in execution time (+12.3\%, see $\Delta t$ in Table \ref{table:table-results}).
+\textbf{javascript-jitless:} For javascript-jitless, disabling JIT resulted in the largest increase in energy consumption across all experiments (+14.5\%, see $\Delta E$ in Table \ref{table:table-results}).
+
+% , and an increase in execution time (+12.3\%, see $\Delta t$ in Table \ref{table:table-results}).
 
 \textbf{csharp-quickjit-false:} Turning off Quick-JIT increases energy consumption (+3.82\%, see $\Delta E$ in Table \ref{table:table-results}).
 
@@ -46,7 +48,7 @@ These results confirm that JIT plays an important role in optimizing both execut
 
 \textbf{rust-pgo \& go-pgo:} While we only have two PGO experiments, in both cases PGO resulted in lower energy consumption (-0.16\% for Rust and -0.72\% for Go, see $\Delta E$ in Table \ref{table:table-results}). That said, for our experiments, only the result for Go is statistically significant.
 
-The results confirm that PGO can help reduce energy consumption.
+% The results confirm that PGO can help reduce energy consumption.
 
 %the small change may indicate that our profiling has not been sufficient to utilize PGO fully.
 
@@ -61,6 +63,6 @@ The span of the implementations is large in terms of their energy consumption. M
 From our results alone, it appears that implementation has a greater impact than the optimizations. 
 
 \subsection{Power analysis}
-Following our statistical analysis, we perform a power analysis. For six of our non-default experiments, ruby-jemalloc, ruby-YJIT, java-jemalloc, csharp-jemalloc, csharp-quickjit-false, and go-PGO, the power analysis shows that five iterations are enough. However, for the other six, more iterations would be necessary to achieve higher statistical power (see Appendix \ref{sec:samle-size}).
+Following our statistical analysis, we perform a power analysis. For six of our non-default experiments, ruby-jemalloc, ruby-YJIT, java-jemalloc, csharp-jemalloc, csharp-quickjit-false, and go-PGO, the power analysis shows that five iterations are enough. However, for the other six, more iterations would be necessary to achieve higher statistical power (see Replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}).
 
 \end{document}
