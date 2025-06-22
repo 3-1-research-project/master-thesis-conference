@@ -1,42 +1,29 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\subsection{Findings}
+\subsection{Key observations}
 
-% Related Work
-% Programming language rankings
-Although the primary purpose of this paper is not to rank programming languages, we can still compare our results to the programming language rankings of our related work \cite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017}, who found that Java and C\# use less energy than JavaScript. However, we find that JavaScript consumes less energy than both Java and C\#, which is opposite to previous findings. 
+Although the primary purpose of this paper is not to rank programming languages, we can still compare our results to the programming language rankings of our related work \cite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017}, who found that Java and C\# use less energy than JavaScript. However, we find that JavaScript consumes less energy than both Java and C\#, which is opposite to previous findings. This suggests that rankings of implementations or programming languages depend on the context in which they are used.
 
-This suggests that rankings of implementations or programming languages depend on the context in which they are used.
+Furthermore, our results support the findings from \textcite{Kempen_Kwon_Nguyen_Berger_2024} and future work proposed by \textcite{Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen, Pfeiffer_Trindade_Meding_Harwick} in that optimizations do have a significant impact on how much energy a given implementation consumes. For instance, while \textcite{Li_Wu_Kavi_Mehta_Yadwadkar_John_2023} and \textcite{Lamprakos_Papadopoulos_Catthoor_Soudris_2022}, found performance gains from using jemalloc over the default malloc, our findings indicate that only Ruby experiences improvements to performance and energy consumption compared to its default allocator.
 
-% kempen
-Furthermore, our results support the findings from \textcite{Kempen_Kwon_Nguyen_Berger_2024} and future work proposed by \textcite{Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen, Pfeiffer_Trindade_Meding_Harwick} in that optimizations do have a significant impact on how much energy a given implementation consumes. 
-
-%jemalloc
-For instance, while \textcite{Li_Wu_Kavi_Mehta_Yadwadkar_John_2023} and \textcite{Lamprakos_Papadopoulos_Catthoor_Soudris_2022}, found performance gains from using jemalloc over the default malloc, our findings indicate that only Ruby experiences improvements to performance and energy consumption compared to its default allocator.
-
-%JIT
 Finally, our experiments with JIT for JavaScript, Ruby, and C\# consistently show that having JIT enabled leads to lower energy consumption (see $\Delta E$ in Table \ref{table:table-results}), supporting the conclusion of  \textcite{Stoico_Dragomir_Lago_2025, Ournani_Belgaid_Rouvoy_Rust_Penhoat_2021, Hu_John_2006}.
 
 \subsection{Unexpected results}
-% Unexpected results
-% Jemalloc and Ruby
 Surprisingly, only Ruby used less energy when using jemalloc compared to malloc as its memory allocator. This goes against our second hypothesis that jemalloc lowers energy consumption. While we can not find any academic literature explaining why, multiple grey literature sources find Ruby uses a lot of memory due to fragmentation \cite{ruby-developer-memory-fragmentation, ruby-memory-fargmentation-joyfulbikesheddingWhatCauses}, which can be solved by using jemalloc instead of malloc \cite{ruby-jemalloc-fix, ruby-sidekiq-jemalloc}. Additionally, \textcite{Kempen_Kwon_Nguyen_Berger_2024} found that cache misses correlate with increased energy consumption; this could also be the case for our results, as memory fragmentation increases the number of low-level cache misses. We also believe it's possible that our context is IO-bound instead of CPU-bound, meaning jemalloc won't increase performance as much, and lead to larger overhead.
 
-% Only Java had a worse first run
 Furthermore, we expected implementations using JIT to have a worse first experiment run due to the optimizations performed by JIT, yet this only happens with Java. This suggests that JIT optimizations do not take a lot of time or energy to perform. We cannot determine why Java has a worse first-run experience, as we do not have the time to investigate it further.
 
 \subsection{Threats to Validity}
 \label{section:threats-to-validity}
 
-% \subsubsection{Conclusion Validity}
 As we only have a small number of experiment iterations, we cannot guarantee the validity of all our results. We have attempted to remedy this by using the Shapiro-Wilk test to determine the most appropriate and powerful statistical test to use. While none of the statistical tests have a minimum number of data points, a sample size of five is generally considered very small, and as such, we should be careful when drawing conclusions. On the other hand, many of our Student's t-test and Mann-Whitney U test results are multiple orders of magnitude lower than our chosen upper bound of 0.05. As such, we are confident in the results of our conclusions.
 
 \subsubsection{Non-realistic scenario}
-% Scenario not based on usage data
-As the scenario is based on repetitive HTTP operations, it is possible that our readings do not reflect a realistic use of micro-blogging websites. An alternative scenario could match a user's interaction with the application.
 
-% Repetitive scenarios
-Our scenario performs the same actions in bulk, such as creating all users simultaneously, posting messages for each user, and having each user follow all others. This repetition could influence how JIT compilation and PGO behave, as these optimizations might perform better in a repetitive context compared to a more realistic, varied interaction pattern.
+As the scenario is based on repetitive HTTP operations, it is possible that our readings do not reflect a realistic use of micro-blogging websites. An alternative scenario could match a user's interaction with the application. Our scenario performs the same actions in bulk, such as creating all users simultaneously, posting messages for each user, and having each user follow all others. This repetition could influence how JIT compilation and PGO behave, as these optimizations might perform better in a repetitive context compared to a more realistic, varied interaction pattern.
+
+\subsection{Power analysis}
+Following our statistical analysis, we perform a power analysis. For six of our non-default experiments, ruby-jemalloc, ruby-YJIT, java-jemalloc, csharp-jemalloc, csharp-quickjit-false, and go-PGO, the power analysis shows that five iterations are enough. However, for the other six, more iterations would be necessary to achieve higher statistical power (see Replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}).
 
 \end{document}

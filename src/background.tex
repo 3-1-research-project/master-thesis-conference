@@ -13,9 +13,7 @@ When researching optimization strategies for a web application, we examine some 
 
 \subsubsection{jemalloc}
 
-Facebook adopted jemalloc to resolve scaling issues and saw significant performance improvements \cite{facebook-jemalloc}. Matt Haliski upgraded his website to use YJIT and jemalloc, and saw a memory drop of $\approx 250$ MB \cite{matt-haliski-yjit-jemalloc-upgarde}. 
-
-The responsibility of a memory allocator is to handle memory allocation and deallocation. The C standard library (libc) \cite{c-language-iso9899-2024} exposes malloc, which can be replaced by custom implementations \cite{Berger_Zorn_McKinley}. Two relevant malloc implementations are from glibc \cite{glibc} and jemalloc \cite{evans2006scalable}. malloc is generally effective, but can struggle in highly concurrent environments \cite{evans2006scalable}. To address this, Jason Evans developed jemalloc \cite{evans2006scalable}, which splits memory into arenas. This reduces lock contention by limiting competition to threads within the same arena. Drawbacks include memory fragmentation and arena management overhead \cite{evans2006scalable}.
+The responsibility of a memory allocator is to handle memory allocation and deallocation. The C standard library (libc) \cite{c-language-iso9899-2024} exposes malloc, which can be replaced by custom implementations \cite{Berger_Zorn_McKinley}. Two relevant malloc implementations are from glibc \cite{glibc} and jemalloc \cite{evans2006scalable}. malloc is generally effective, but can struggle in highly concurrent environments \cite{evans2006scalable}. To address this, Jason Evans developed jemalloc \cite{evans2006scalable}, which splits memory into arenas to reduces lock contention by limiting competition to threads. Drawbacks include memory fragmentation and arena management overhead \cite{evans2006scalable}.
 
 \subsubsection{Profile-Guided Optimization (PGO)}
 
@@ -25,10 +23,6 @@ As PGO requires data collection before applying optimizations, it is static and 
 
 \subsubsection{Just-In-Time (JIT) Compilation}
 
-Shopify, built on Ruby on Rails \cite{shopify-yjit}, developed Yet Another Ruby JIT (YJIT), now merged into CRuby \cite{shopify-yjit}. This sparked interest in JIT among Ruby developers.
-
 JIT compilation performs similar optimizations to PGO, but dynamically at runtime \cite{Wade_Kulkarni_Jantz_2017}. It collects and applies usage-based optimizations without rebuilding the application. The specifics vary by implementation, but typically, an interpreter compiles code to machine code while optimizing based on recent data \cite{Wade_Kulkarni_Jantz_2017}. This dynamic approach introduces runtime overhead and potential initial performance hits \cite{Aycock_2003}.
 
-\subsection{Temperature}
-The power draw (in Watts) increases as the resistance goes up. The resistance increases at higher temperatures in conductive materials \cite{ling2016university}. Transistors may leak current, and devices may throttle due to higher temperatures \cite{benoit2020impact}.  
 \end{document}

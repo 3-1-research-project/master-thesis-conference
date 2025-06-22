@@ -9,61 +9,20 @@ Everything required to reproduce our results and replicate our experiment can be
 \subsection{MiniTwit Implementations}
 Most MiniTwit implementations used in our experiment originate from \textcite{Pfeiffer_Trindade_Meding_Harwick} , except for the Java Spring implementation, which we added. \textcite{Pfeiffer_Trindade_Meding_Harwick} investigates how the backend API's energy performance compares across programming languages, by ensuring the backend APIs are feature-equivalent. However, the frontends of the implementations are not.
 
-Our experiment focuses on users interacting with the application's frontend and does not use the backend API. Therefore, we introduce a set of functional requirements to ensure that the frontend of the implementations is feature-equivalent. Adherence to the requirements is enforced using automated tests and code review. All of this can be found in the replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}, and an overview of each MiniTwit implementation we use, along with the web framework used, can be found in Table \ref{table:programming-language-and-versions}.
-
-To ensure a realistic implementation of MiniTwit, we adhere to the guidelines set by the programming language and web frameworks for sufficient implementation. Additionally, when adjusting the existing MiniTwit implementation from \textcite{Pfeiffer_Trindade_Meding_Harwick} we used the same linters as they specified, and when adding a new Java implementation, we used the linter Checkstyle v10.21.4 \cite{checkstyleReleaseNotes}.
-
-\begin{table}[]
-\renewcommand{\arraystretch}{1.5}
-    \centering
-    \begin{tabular}{|ll|}
-        \hline
-        \rowcolor[HTML]{EFEFEF}
-         \textbf{Programming Language}& \textbf{Web Framework}\\
-         \hline
-         \tikz\draw[fill=rust, draw=rust] (0,0) circle (0.1cm); Rust v1.86.0& Actix v4\\
-         
-         \rowcolor[HTML]{EFEFEF}
-         \tikz\draw[fill=python, draw=python] (0,0) circle (0.1cm); Python v3.12.3& Flask v3.0.3\\
-         
-         \tikz\draw[fill=ruby, draw=ruby] (0,0) circle (0.1cm); Ruby v3.4.0& Sinatra v4.1.1\\
-         
-         \rowcolor[HTML]{EFEFEF}
-         \tikz\draw[fill=javascript, draw=javascript] (0,0) circle (0.1cm); JavaScript v18.19.1& Express v4.21.2 \\
-         
-         \tikz\draw[fill=java, draw=java] (0,0) circle (0.1cm); Java v17& Spring v3.0.2Asp\\
-         
-         \rowcolor[HTML]{EFEFEF}
-         \tikz\draw[fill=csharp, draw=csharp] (0,0) circle (0.1cm); C\# v12.0& NetCore 8.0.10\\
-         
-         \tikz\draw[fill=go, draw=go] (0,0) circle (0.1cm); Go v1.22.2& Gorilla v1.8.1\\ % cargo 1.86.0
-         \hline
-    \end{tabular}
-    \caption{Overview of the programming language and web framework used in each MiniTwit implementation, with the version number used}
-    \label{table:programming-language-and-versions}
-\end{table}
+Our experiment focuses on users interacting with the application's frontend and does not use the backend API. Therefore, we introduce a set of functional requirements to ensure that the frontend of the implementations is feature-equivalent. Adherence to the requirements is enforced using automated tests and code review. All of this can be found in the replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}. 
 
 \subsection{Experiment Design}
-The experiment is a controlled environment to measure the difference in energy consumption between optimizations of the selected MiniTwit applications. This is achieved through the lab setup, which utilizes Raspberry Pis, as they have fewer hardware components that can consume power during the experiments. Furthermore, the Raspberry Pis are easier to set up, acquire, and are cheaper than laptops.
+The experiment is a controlled environment to measure the difference in energy consumption between optimizations of the selected MiniTwit applications. This is achieved through the lab setup, which utilizes Raspberry Pis, as they have fewer hardware components that can consume power during the experiments.
 
 \subsubsection{Hardware Setup}
-An illustration of the experiment setup is shown in Figure \ref{fig:experiment-setup}.
+An illustration of the experiment setup is shown in Figure \ref{fig:experiment-setup}. The Client Device runs the client code that interacts with the MiniTwit frontend, while the Web Server hosts and executes the MiniTwit application itself. A Database Server runs a containerized PostgreSQL instance to store application data. To measure energy consumption, an Otii Ace Pro \cite{qoitech_otii_ace_pro} device is used to track the power draw of the Web Server during the experiment. The entire setup is managed from a Controller Computer, which is a personal laptop used to orchestrate the experiment. All devices are connected through a Network Switch, ensuring stable and consistent communication between components.
 
-\begin{figure*}[]
+\begin{figure}[]
     \centering
-    \includegraphics[width=1\linewidth]{media/experiment/experiment-Setup.pdf}
+    \includegraphics[width=.9\linewidth]{media/experiment/experiment-Setup.pdf}
     \caption{Overview of the experiment setup we use to measure the energy consumption of a MiniTwit implementation.}
     \label{fig:experiment-setup}
-\end{figure*}
-
-\begin{itemize}
-    \item \textbf{Client Device}: Runs the client code that interacts with the MiniTwit frontend. The client code runs in a container with each Client Device having four containers, one for each of its cores
-    \item \textbf{Web Server}: Runs the MiniTwit application
-    \item \textbf{Database Server}: Runs a containerized PostgreSQL database
-    \item \textbf{Otii Ace Pro\cite{qoitech_otii_ace_pro}}: Measures the power draw by the Web Server during an experiment
-    \item \textbf{Controller Computer}: Personal Laptop used for orchestrating the experiment
-    \item \textbf{Network Switch}: Ensures a stable communication connection between the Database Server, Web Server, Client Devices, and Controller Computer
-\end{itemize}
+\end{figure}
 
 The relevant hardware for our experiments consists of Raspberry Pi 4B's for Server (8GB RAM), Database (4GB RAM) and Client (8GB RAM) devices. All of them running Ubuntu Server 24.10 as OS. For the power supply and measuring device, we used the Otii Ace Pro.  
 
@@ -86,81 +45,27 @@ An experiment starts by manually ensuring every device is connected and set up a
 
 Each iteration starts with a temperature reading from the Web Server's CPU. This is done to ensure that no experiment begins with an abnormal CPU temperature that could affect the results. Afterwards, it makes a call to the Otii to initiate the power measurement. The Controller Computer sends out calls to the 12 Client Services to start their scenario. After each of the 12 Client Services has finished the scenario, the Controller Computer finishes the Otii power measurement. Then it collects another temperature reading from the Web Server, to see how the CPU temperature changed during the experiment and ensure it remained within a reasonable range. Lastly, the Controller Computer collects the power draw readings from the Otii and saves them to a local CSV file.
 
-The scenario run in each client service consists of four phases:
-
-\begin{enumerate}
-    \item A loop creates 10 users
-    \item Each of the 10 users sends 30 tweets
-    \item Each of the 10 users logs in and follows each of the 9 other users
-    \item Each of the 10 users logs in and unfollows each of the 9 other users
-\end{enumerate}
-
 The design idea behind the scenario is to ensure that we utilize the HTTP operations: POST, GET, and DELETE. Each of the operations is a part of the following stages of the scenario:
 
 \begin{itemize}
-    \item POST: Phase 1 when creating users, phase 2 when creating a tweet, and phase 3 when following a user, as that creates a follow-entry in the database. 
-    \item GET: Phases 2, 3, and 4, as navigating to any page that displays tweets results in a read operation.
-    \item DELETE: Step 4, when unfollowing a user, as that deletes the follow-entry from the database.
+    \item POST: When creating users or tweets, and when following a user, as that creates a follow-entry in the database. 
+    \item GET: Navigating to any page that displays tweets results in a read operation.
+    \item DELETE: When unfollowing a user.
 \end{itemize}
 
 The specific scenario can be found in the replication kit \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}.
 
 \subsection{Choice of Optimizations}
-We decided to measure, at most, two optimizations for each implementation. Additionally, for each implementation, a control experiment is run, with default optimizations. Which, from now on, is referred to as the default experiment. We decided on two types of optimizations, one related to the memory allocator (jemalloc) and one related to FDO.
+We decided to measure one or two optimizations for each implementation, depending on which were readily available. Additionally, for each implementation, a control experiment is run, with default optimizations. Which, from now on, is referred to as the default experiment. We decided on two types of optimizations, one related to the memory allocator (jemalloc) and one related to FDO, specifically JIT and PGO respectively.
 
-For FDO either PGO or JIT is used, depending on which one is readily available for the given implementation's underlying programming language. Regarding memory management, we decide to use jemalloc, as it is designed for a multithreaded context, such as a web application.
-
-Table \ref{table:chosen-configurations} contains an overview of the chosen optimizations for each experiment.
-
-\begin{table*}[]
-\renewcommand{\arraystretch}{1.5}
-\begin{tabular}{|llll|}
-\hline
-\rowcolor[HTML]{EFEFEF} 
-\textbf{Experiment} & \textbf{\begin{tabular}[r]{@{}r@{}}Programming\\ language\end{tabular}} & \textbf{Memory Allocator} & \textbf{FDO}                \\ \hline
-\colcirc{rust} rust-default     & Rust        & Malloc (def)          & PGO Disabled (def)      \\
-\rowcolor[HTML]{EFEFEF} 
-\colsq{rust} rust-jemalloc      & Rust        & Jemalloc                  & PGO Disabled (def)      \\
-\coltri{rust} rust-pgo          & Rust        & Malloc (def)          & PGO Enabled                 \\ \hline
-\rowcolor[HTML]{EFEFEF} 
-\colcirc{python} python-default & Python      & Malloc (def)          & N/A*                         \\
-\colsq{python} python-jemalloc  & Python      & Jemalloc                  & N/A*                         \\ \hline
-\rowcolor[HTML]{EFEFEF} 
-\colcirc{ruby} ruby-default     & Ruby        & Malloc (def)          & YJIT Disabled (def)     \\
-\colsq{ruby} ruby-jemalloc      & Ruby        & Jemalloc                  & YJIT Disabled (def)     \\
-\rowcolor[HTML]{EFEFEF} 
-\coltri{ruby} ruby-yjit         & Ruby        & Malloc (def)          & YJIT Enabled                \\ \hline
-\colcirc{javascript} javascript-default     & JavaScript & Malloc (def)          & JIT Enabled (def)       \\
-\rowcolor[HTML]{EFEFEF} 
-\colsq{javascript} javascript-jemalloc      & JavaScript & Jemalloc                  & JIT Enabled (def)       \\
-\coltri{javascript} javascript-jitless      & JavaScript & Malloc (def)          & JIT Disabled                \\ \hline
-\rowcolor[HTML]{EFEFEF} 
-\colcirc{csharp} csharp-default             & C\#         & Malloc (def)          & Quick JIT Enabled (def) \\
-\colsq{csharp} csharp-jemalloc             & C\#         & Jemalloc                  & Quick JIT Enabled (def) \\
-\rowcolor[HTML]{EFEFEF} 
-\coltri{csharp} csharp-quickjit-false      & C\#         & Malloc (def)          & Quick JIT Disabled          \\ \hline
-\colcirc{java} java-default                 & Java        & Malloc (def)          & N/A*                         \\
-\rowcolor[HTML]{EFEFEF} 
-\colsq{java} java-jemalloc                 & Java        & Jemalloc                  & N/A*                         \\ \hline
-\colcirc{go} go-default                     & Go          & Malloc (def)          & PGO Disabled (def)      \\
-\rowcolor[HTML]{EFEFEF} 
-\colsq{go} go-jemalloc                     & Go          & Jemalloc                  & PGO Disabled (def)      \\
-\coltri{go} go-pgo                          & Go          & Malloc (def)          & PGO Enabled                 \\ \hline
-\end{tabular}
-\caption{Table describing each selected experiment and its adjusted optimizations. Default's are marked with (def). * Entries labeled "N/A" mean we did not find a suitable optimization within the category for the specific programming language}
-\label{table:chosen-configurations}
-\end{table*}
-
-Using PGO on an application requires profile data. This tracks which parts of the code are frequently used and which are rarely used, and uses this information when compiling the code to optimize it accordingly. For our experiments, we acquire the profile data by running a single data-collection experiment iteration with the default version of the specific implementation. The data-collection experiment iteration involves running the same scenario as all the other experiments; however, it is not included in the resulting power measurements. 
+Using PGO on an application requires profile data. For our experiments, we acquire the profile data by running a single data-collection experiment iteration with the default version of the specific implementation. The data-collection experiment iteration involves running the same scenario as all the other experiments; however, it is not included in the resulting power measurements. 
 
 \subsection{Statistical Analysis}
 To assess the significance of each experiment, we include p-values, which indicate the likelihood that the results are statistically different compared to the default experiment. A high p-value suggests no meaningful difference, while a value below 0.05 is considered statistically significant. 
 
 We determine whether our data is normally distributed to identify the appropriate statistical test to use. For this, we run a Shapiro-Wilk test \cite{shapiro1965analysis}.
 
-To determine statistical significance we use the parametric statistical test, Student's t-test \cite{student1908}, for the normally distributed data and the non parametric statistical test, Mann-Whitney U test \cite{mann1947test}, is used for the non-normal data. 
-
-We do this to ensure the most accurate p-value for each experiment.
+To determine statistical significance we use the parametric statistical test, Student's t-test \cite{student1908}, for the normally distributed data and the non parametric statistical test, Mann-Whitney U test \cite{mann1947test}, is used for the non-normal data. We do this to ensure the most accurate p-value for each experiment.
 
 Each of these two tests also provides a statistical value: the t-statistic for the t-test and the U-statistic for the Mann-Whitney U test. These values are used to indicate the magnitude of the difference between the two compared datasets. A larger value means a larger difference. 
 

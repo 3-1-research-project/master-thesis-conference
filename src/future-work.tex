@@ -1,6 +1,8 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
+
 \section{Future Work}
+
 Future research can build upon our findings regarding how optimization impacts the energy consumption of web applications.
 
 The next step would be to investigate how different combinations of optimizations impact energy consumption. If possible, it would be beneficial to conduct a thorough combinatorial test of multiple optimizations and their impact on each implementation. We expect that some optimizations complement or counteract each other, which could impact energy consumption.
@@ -8,7 +10,5 @@ The next step would be to investigate how different combinations of optimization
 Other approaches would be to target how the scenario impacts the experiment. This could be explored by randomizing the order of inputs from the client's scenario or base the scenario on real usage data, to avoid the application optimizing for repetitive tasks. 
 
 Since the quality of the implementations used for the experiments may vary, one approach could be to collect multiple different implementations written in the same programming language and framework. This would enable the exploration of how the specific implementation, specifically the actual written code, affects the energy consumption of the application. 
-
-Finally, we could also measure other parts of the system, such as the clients or the database, since their energy consumption is currently unknown. This might lead to the inclusion of different optimizations for these components, which are currently not considered in this paper.
 
 \end{document}

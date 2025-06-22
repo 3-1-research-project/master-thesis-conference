@@ -1,19 +1,12 @@
 \documentclass[../main.tex]{subfiles}
 \begin{document}
-% TODO
-% - Write a short background section before going deeper into the hypthesis
 
 \section{Introduction}
-The rapid growth of digital technologies has brought innovation, but also increased global CO2 emissions. In 2018, data centers were estimated to be responsible for 1\% of the total energy consumption \cite{Masanet_Shehabi_Lei_Smith_Koomey_2020}, which, given the advent of Generative AI, is expected to increase in the coming years. Additionally, the entire ICT sector is estimated to be responsible for 2.1-3.9\% of global Greenhouse Gas emissions \cite{freitag2021climate}. This is equivalent to the global aviation sector \cite{lee2010aviation}, which was responsible for 2.6\% of emissions in 2019 \cite{planes2021simulation}. To accommodate this increasing concern, regulatory measures such as the EU's Energy Directive require companies to report on their energy consumption \cite{eu-environmental-efficiency-directive, eu-environmental-impact-reporting-article}. This includes the consumption of software.
+The rapid growth of digital technologies has brought innovation, but also increased global CO2 emissions. In 2018, data centers were estimated to be responsible for 1\% of the total energy consumption \cite{Masanet_Shehabi_Lei_Smith_Koomey_2020}, which, given the advent of Generative AI, is expected to increase in the coming years. To accommodate this increasing concern, regulatory measures such as the EU's Energy Directive require companies to report on their energy consumption \cite{eu-environmental-efficiency-directive, eu-environmental-impact-reporting-article}. This includes the consumption of software.
 
-% Rankings
-% Kempen issues rankings
 Previous research has already investigated multiple areas of how software consumes energy and how we can influence a software application's energy consumption. \textcite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017, Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024} have investigated the energy efficiency of various programming languages solving programmatic problems. However, \textcite{Kempen_Kwon_Nguyen_Berger_2024} recently showed that these rankings may be flawed due to inconsistencies in the third-party libraries that were used and how the software was configured.
 
-% Pfeiffer and co.
-\textcite{Pfeiffer_2024} examined how different versions of CPython impact the energy consumption of a web application and found that newer versions of CPython are more energy-efficient.  In contrast to \textcite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017, Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024},  \textcite{Pfeiffer_2024} uses a different approach by measuring a web application as opposed to solving programmatic problems. Using a web application provides a more realistic context, which is required to understand how software running in the real world consumes energy.
-
-In our research project \cite{Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen}, we also used web applications, each written in a different programming language and using a single web framework per language, to measure energy consumption. While we did find notable differences in energy use across programming languages, we also observed that the configuration of one of the web applications had a significant impact on consumption. 
+\textcite{Pfeiffer_Trindade_Meding_Harwick} instead measured the energy consumption of different programming languages and web frameworks using a web application, offering a more realistic context than prior benchmarks. Similarly, our project \cite{Pfeiffer_Offenberg_Pedersen_Landsgaard_Karlsen} we evaluated energy consumption across web applications written in different languages and frameworks. While language choice affected energy use, configuration also played a significant role.
 
 To our knowledge, no research has been conducted on the impact of configurations on the energy consumption of web applications. We investigate this by selecting a subset of configurations related to optimizations, including jemalloc, Just-In-Time (JIT) compilation, and Profile-Guided-Optimizations (PGO). We do so by investigating the following research question.
 
@@ -21,7 +14,7 @@ To our knowledge, no research has been conducted on the impact of configurations
     \textbf{RESEARCH QUESTION (RQ)}: \emph{How do different implementations of a feature equivalent micro-blogging web application vary in energy consumption depending on how the software is optimized}
 \end{quote}
 
-The micro-blogging web application used is MiniTwit, a minimal clone of X (formerly known as Twitter\cite{verge-twitter-rebrand-x}), written in Rust Actix, Python Flask, Ruby Sinatra, JavaScript Express, Java Spring, C\# NetCore, and Go Gorilla. The MiniTwit implementations are adapted from \textcite{Pfeiffer_Trindade_Meding_Harwick} except for Java Spring, which we added. All these were made feature-equivalent by following a set of functional requirements.
+The micro-blogging web application used is MiniTwit, a minimal clone of X (formerly known as Twitter\cite{verge-twitter-rebrand-x}), written in Rust Actix, Python Flask, Ruby Sinatra, JavaScript Express, Java Spring, C\# NetCore, and Go Gorilla. The MiniTwit implementations are adapted from \textcite{Pfeiffer_Trindade_Meding_Harwick} except for Java Spring, which we added. All these were made feature-equivalent by following a set of functional requirements \cite{replication-kit-Karlsen_Landsgaard_Offenberg_Pedersen_2025}.
 
 We propose a set of hypotheses to guide the research, focusing on specific questions related to energy measurement and optimization.
 
@@ -31,9 +24,7 @@ In a previous research project we found that the longer an experiment ran, the m
     \textbf{HYPOTHESIS 1 (H1)}: \emph{Implementations with longer execution times draw more power on average, compared to implementations with shorter execution time}
 \end{quote}
 
-% Longer running applications draw more power
-
-One approach used for optimizing web applications is the addition of JIT compilation. A recent example of this is Shopify, which added a new JIT implementation to Ruby called Yet Another Ruby JIT (YJIT) and saw a significant performance increase. \cite{shopify-yjit}. This raises the question of whether the use of JIT also reduces energy consumption. PGO performs the same optimizations as JIT, but at compile time instead of runtime, which is why we want to see if PGO also decreases energy consumption.
+One approach used for optimizing web applications is the addition of JIT compilation. A recent example of this is Shopify, which added a new JIT implementation to Ruby and saw a significant performance increase. \cite{shopify-yjit}. PGO performs the same optimizations as JIT, but at compile time instead of runtime, which is why we want to explore that as well.
 
 Another way to increase the performance of web applications has been achieved through the use of the memory allocator jemalloc. This has been done by Facebook who hired the jemalloc developer to improve their web application's performance \cite{facebook-jemalloc}. 
 
@@ -57,15 +48,8 @@ Although we believe that optimizations will play a significant role in an implem
     \textbf{HYPOTHESIS 5 (H5)}: \emph{Some implementations will consume more energy than others, regardless of how we configure the runtime optimizations and memory allocator}
 \end{quote}
 
-We measure the energy consumption of feature-equivalent MiniTwit web applications implemented in different programming languages. The experiment uses Raspberry Pi devices to host the web application, run the application’s database, and simulate client interactions through a scripted scenario. Different experiments are conducted on the same implementations, varying optimizations to observe their effects. Measurements are done using a hardware-based power measurement method on the web application device.
-
-% - High-level results
-In summary, our results show that disabling JIT for a web application can increase energy consumption up to 14.52\%, using PGO can decrease energy consumption up to 0.72\%. On the other hand, jemalloc both increased energy consumption by upwards of 2.16\% and decreased it by 2.08\% in different implementations.
-
-% - High-level conclusion
 We find that optimizations such as jemalloc, JIT, and PGO can significantly impact energy consumption. JIT and PGO consistently reduce an application's energy consumption and should be enabled whenever possible. The effect of using jemalloc may vary depending on the programming language and web framework.
 
-% - List of contributions
 This paper's contributions are:
 
 \begin{quote}
