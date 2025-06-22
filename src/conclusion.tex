@@ -12,36 +12,24 @@ To address the research question in greater detail, we propose five hypotheses a
 \\
 We find there is a very strong linear correlation between power draw and execution time, with a Pearson Correlation of 0.86 and a p-value of $3.09 \times 10^{-29}$.
 
-\textbf{(H2):} \emph{Implementations configured to use jemalloc will have an increased energy consumption compared to implementations using malloc.}
+\textbf{(H2):} \emph{Implementations configured to use jemalloc will have a lower energy consumption compared to implementations using malloc.}
 \\
-We find that using jemalloc generally increases the energy consumption of implementations between 0.68\% to 2.16\%, except in the case of Ruby, where it decreases the energy consumption by 2.08\%.
+We find that using jemalloc generally increases the energy consumption of implementations between 0.68\% to 2.16\%, except in the case of Ruby, where it decreases the energy consumption by -2.08\%, rejecting our hypothesis.
 
 \textbf{(H3):} \emph{Implementations configured to use JIT will have lower energy consumption.}
 \\
-We find that enabling JIT for Ruby decrease energy consumption by 6.37\%. Similarly, disabling JIT for JavaScript increases the energy consumption by 14.52\% and disabling Quick-JIT for C\# increases energy consumption by 3.82\%. Therefore, it is proven that JIT is beneficial across all implementations tested. 
+We find that enabling JIT for Ruby decrease energy consumption by -6.37\%. Similarly, disabling JIT for JavaScript increases the energy consumption by 14.52\% and disabling Quick-JIT for C\# increases energy consumption by 3.82\%. Therefore, it is proven that JIT is beneficial across all implementations tested. 
 
 \textbf{(H4):} \emph{Implementations configured to use PGO will have lower energy consumption.}
 \\
-We find that using PGO for Go can decrease energy consumption by 0.72\%.
+We find that using PGO for Go can decrease energy consumption by -0.72\%.
 
 \textbf{(H5):} \emph{Some implementations will consume more energy than others, regardless of how we configure the runtime optimizations and memory allocator.}
 \\
 We find that the span between implementations' energy consumption is very distinct from one another, regardless of the optimizations applied. Our Java experiments range from 2235.8 J to 2246.39 J, while our Rust experiments range from 1329.3 J to 1344.16 J. While other implementations are closer, they rarely overlap.
 
-We established a set of goals for our research.
-
-\textbf{(G1):} \emph{To investigate the stated hypotheses regarding how different software optimizations influence the energy consumption of web applications.}
-
-    We achieve this goal through the systematic testing and analysis of the effects that specific optimizations have on the energy consumption of a controlled web application environment.
-
-\textbf{(G2):} \emph{To investigate energy consumption in a more realistic, practical context of energy-efficient software development, using a web application.}
-
-    We achieve this goal by implementing and evaluating the MiniTwit implementations. By using feature-equivalent micro-blogging applications, we can assess the impact of optimizations on energy consumption in a realistic and practical context.
-
-%contributions
 Our contributions include a reproducible experiment design, feature-equivalent MiniTwit implementations with a replication kit, and insights into how optimizations affect the energy consumption of web applications.
 
-% Implications
 \textbf{Impact for researchers:} From our study, we find that the optimizations jemalloc, JIT and PGO can have a significant impact on energy consumption for web applications. Thus, they should be taken into account when measuring or researching energy consumption. 
 
 \textbf{Impact for practitioners:} We would recommend enabling JIT or PGO if possible, as they can decrease how much energy the web application uses. Regarding jemalloc, the results may vary and depend on the programming language and web framework used.

@@ -1,21 +1,14 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
+
 \section{Future Work}
+
 Future research can build upon our findings regarding how optimization impacts the energy consumption of web applications.
 
-%Combinatorial test of many optimizations
 The next step would be to investigate how different combinations of optimizations impact energy consumption. If possible, it would be beneficial to conduct a thorough combinatorial test of multiple optimizations and their impact on each implementation. We expect that some optimizations complement or counteract each other, which could impact energy consumption.
 
-%More implementations (languages + frameworks + configurations)
-Having more implementations could help strengthen the findings. This could be achieved by creating implementations from unused programming languages or by having implementations written in the same programming language while using a different web framework.
+Other approaches would be to target how the scenario impacts the experiment. This could be explored by randomizing the order of inputs from the client's scenario or base the scenario on real usage data, to avoid the application optimizing for repetitive tasks. 
 
-%More or varied scenarios of the same configurations (Random actions, Real usage data, Vary amount of clients)
-Other approaches would be to target how the scenario impacts the experiment. This could be explored by randomizing the order of inputs from the client's scenario, to avoid the application optimizing for repetitive tasks. Additionally, the experiment could be run multiple times, varying the number of clients, which would explore how load affects the optimization of an implementation. Furthermore, real application data could be collected and used as a scenario to ensure it properly represents how a micro-blogging application is used.
-
-%Explore how the specific implementation impacts the energy (good/bad implementation) + (Languages/frameworks energy compared web application (compare implementation with web application as the software running instead of algorithms))
-Since the quality of the implementations used for the experiments may vary, one approach could be to collect multiple different implementations written in the same programming language and framework. This would enable the exploration of how the specific implementation, specifically the actual written code, affects the energy consumption of the application. Additionally, making MiniTwit implementation more comparable would allow for a ranking or comparison study like \textcite{pereira2017energy, Pereira_Couto_Ribeiro_Rua_Cunha_Fernandes_Saraiva_2021, Couto_Pereira_Ribeiro_Rua_Saraiva_2017, Gordillo_Calero_Moraga_García_Fernandes_Abreu_Saraiva_2024}.
-
-%Energy measurements of other parts of the system (database, clients, switch, etc.)
-Finally, we could also measure other parts of the system, such as the clients or the database, since their energy consumption is currently unknown. This might lead to the inclusion of different optimizations for these components, which are currently not considered in this paper.
+Since the quality of the implementations used for the experiments may vary, one approach could be to collect multiple different implementations written in the same programming language and framework. This would enable the exploration of how the specific implementation, specifically the actual written code, affects the energy consumption of the application. 
 
 \end{document}
